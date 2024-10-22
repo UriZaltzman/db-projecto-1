@@ -25,3 +25,12 @@ export const verifyToken = async (req, res, next) => {
     next();
 
 };
+
+const corsOptions = {
+    origin: ['http://dominio-aceptado.com', 'http://otro-dominio.com'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
+    allowedHeaders: ['Content-Type', 'Authorization'], // Encabezados permitidos
+    optionsSuccessStatus: 200
+};  
+const corsop = {corsOptions};
+export default corsop;

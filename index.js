@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import Registro from './controllers/Registro.js';
 import Usuario from './controllers/Usuario.js';
-import { verifyToken } from './middlewares/Usuario.middleware.js';
+import corsop, { verifyToken } from './middlewares/Usuario.middleware.js';
 // import { getSaldo, transferirDinero, getTransacciones } from './controllers/wallet.js';
 
 const app = express();
@@ -10,7 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
+app.use(cors(corsop.corsOptions));
 app.use(express.json());
 
 app.get("/", (_, res) => {
