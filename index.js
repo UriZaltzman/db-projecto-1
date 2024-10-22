@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import Registro from './controllers/Registro.js';
 import Usuario from './controllers/Usuario.js';
+import Transferencias from './controllers/Transacciones.js'
 import corsop, { verifyToken } from './middlewares/Usuario.middleware.js';
 // import { getSaldo, transferirDinero, getTransacciones } from './controllers/wallet.js';
 
@@ -22,6 +23,9 @@ app.post("/nuevo", Registro.AddUser);
 // Logearse
 app.post("/login", Usuario.Logearse);
 app.get("/profile/:id", verifyToken, Usuario.Profile);
+
+//Transacciones
+app.get("/filtro", Transferencias.filtro);
 
 // Uncomment these if needed
 // app.use("/saldo", getSaldo);
