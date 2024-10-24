@@ -19,20 +19,19 @@ const filtro = async (req, res) => {
 
 const transferirDinero = async (req, res) => {
     try {
-        const { remitenteId, monto, destinatarioId } = req.body;
+        const { remitenteId, saldo, destinatarioId } = req.body;
 
         // Verificar que el remitente tenga saldo suficiente
-        const querySaldoRemitente = "SELECT saldo, nombre, apellido FROM perfil WHERE id = $1";
+        const querySaldoRemitente = "SELECT saldo FROM perfil WHERE id = $1";
         const remitente = await pool.query(querySaldoRemitente, [remitenteId]);
 
         if (remitente.rows.length === 0) {
-            return res.status(400).json({ success: false, message: "Remitente no encontrado" });
+            return res.status(400).json({ success: false, message: "Usuario no no encontrado" });
         }
 
         const saldoRemitente = remitente.rows[0].saldo;
-        const remitenteNombre = `${remitente.rows[0].nombre} ${remitente.rows[0].apellido}`;
 
-        if (saldoRemitente < monto) {
+        if (saldoRemitente < saldo) {
             return res.status(400).json({ success: false, message: "Saldo insuficiente" });
         }
 
@@ -41,7 +40,7 @@ const transferirDinero = async (req, res) => {
         const destinatario = await pool.query(queryDestinatario, [destinatarioId]);
 
         if (destinatario.rows.length === 0) {
-            return res.status(400).json({ success: false, message: "Destinatario no encontrado" });
+            return res.status(400).json({ success: false, message: "Persona no encontrado" });
         }
 
         const destinatarioNombre = `${destinatario.rows[0].nombre} ${destinatario.rows[0].apellido}`;
@@ -49,13 +48,13 @@ const transferirDinero = async (req, res) => {
         // Realizar la transferencia
         await pool.query("BEGIN"); // Iniciar transacción
 
-        // Restar el monto del remitente
+        // Restar el saldo del remitente
         const queryRestarSaldoRemitente = "UPDATE perfil SET saldo = saldo - $1 WHERE id = $2";
-        await pool.query(queryRestarSaldoRemitente, [monto, remitenteId]);
+        await pool.query(queryRestarSaldoRemitente, [saldo, remitenteId]);
 
-        // Sumar el monto al destinatario
+        // Sumar el saldo al destinatario
         const querySumarSaldoDestinatario = "UPDATE perfil SET saldo = saldo + $1 WHERE id = $2";
-        await pool.query(querySumarSaldoDestinatario, [monto, destinatarioId]);
+        await pool.query(querySumarSaldoDestinatario, [saldo, destinatarioId]);
 
         // Registrar la transferencia en la tabla transferencia
         const queryInsertarTransferencia = `
