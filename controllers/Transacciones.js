@@ -13,7 +13,7 @@ const filtro = async (req, res) => {
             return res.status(200).json({ success: true, results: resultadoFiltro.rows });
         }
     } catch (error){
-        return res.status(500).json({ success: false, message: "Error en el servidor123" });
+        return res.status(500).json({ success: false, message: "Error en el servidor" });
     }
 }
 
@@ -26,7 +26,7 @@ const transferirDinero = async (req, res) => {
         const remitente = await pool.query(querySaldoRemitente, [remitenteId]);
 
         if (remitente.rows.length === 0) {
-            return res.status(400).json({ success: false, message: "Usuario no no encontrado" });
+            return res.status(400).json({ success: false, message: "Usuario no encontrado" });
         }
 
         const saldoRemitente = remitente.rows[0].saldo;
@@ -58,12 +58,14 @@ const transferirDinero = async (req, res) => {
 
         // Registrar la transferencia en la tabla transferencia
         const queryInsertarTransferencia = `
-            INSERT INTO transferencia (id_user, destino, fecha)
-            VALUES ($1, $2, NOW()) RETURNING id
+            INSERT INTO transacciones (id_user, destino, fecha, monto)
+            VALUES ($1, $2, $3, $4) RETURNING id
         `;
         const registroTransferencia = await pool.query(queryInsertarTransferencia, [
             remitenteId,
-            destinatarioNombre
+            destinatarioId,
+            new Date(),
+            saldo
         ]);
 
         await pool.query("COMMIT"); // Confirmar la transacción
@@ -76,6 +78,7 @@ const transferirDinero = async (req, res) => {
 
     } catch (error) {
         await pool.query("ROLLBACK"); // Revertir la transacción en caso de error
+        console.log(error);
         return res.status(500).json({ success: false, message: "Error en el servidor" });
     }
 };
