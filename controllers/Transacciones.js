@@ -83,5 +83,47 @@ const transferirDinero = async (req, res) => {
     }
 };
 
-const Transferencias = { filtro, transferirDinero };
+const transferirDineroSimulacion = async (req, res) => {
+    try {
+        const { remitenteId, saldo, destinatarioId } = req.body;
+
+        // Verificar que el remitente tenga saldo suficiente
+        const querySaldoRemitente = "SELECT saldo FROM perfil WHERE id = $1";
+        const remitente = await pool.query(querySaldoRemitente, [remitenteId]);
+
+        if (remitente.rows.length === 0) {
+            return res.status(400).json({ success: false, message: "Usuario no encontrado" });
+        }
+
+        const saldoRemitente = remitente.rows[0].saldo;
+
+        if (saldoRemitente < saldo) {
+            return res.status(400).json({ success: false, message: "Saldo insuficiente" });
+        }
+
+        const queryDestinatario = "SELECT id, nombre, apellido FROM perfil WHERE id = $1";
+        const destinatario = await pool.query(queryDestinatario, [destinatarioId]);
+
+        if (destinatario.rows.length === 0) {
+            return res.status(400).json({ success: false, message: "Persona no encontrado" });
+        }
+
+        const destinatarioNombre = `${destinatario.rows[0].nombre} ${destinatario.rows[0].apellido}`;
+        
+        const queryRestarSaldoRemitente = "Select *, saldo - $1  as nuevo_saldo from perfil WHERE id = $2";
+        const datamensaje = await pool.query(queryRestarSaldoRemitente, [saldo, remitenteId]);
+        const mensajeAVISO = `vas a transferir ${saldo} a ${destinatarioNombre}. Después de la operación te va a quedar ${datamensaje.rows[0].nuevo_saldo}. ¿Estas de acuerdo?`;
+
+        return res.status(200).json({ 
+            success: true, 
+            message: mensajeAVISO, 
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ success: false, message: "Error en el servidor" });
+    }
+};
+
+const Transferencias = { filtro, transferirDinero, transferirDineroSimulacion };
 export default Transferencias;

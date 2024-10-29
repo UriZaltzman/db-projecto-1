@@ -27,6 +27,7 @@ app.get("/profile/:id", verifyToken, Usuario.Profile);
 //Transacciones
 app.get("/filtro", Transferencias.filtro);
 app.post("/transferir", Transferencias.transferirDinero);
+app.post("/simtransferencia", Transferencias.transferirDineroSimulacion);
 
 // Uncomment these if needed
 // app.use("/saldo", getSaldo);
