@@ -99,11 +99,24 @@ const Logearse = async(req, res) => {
     }
 };
 
+const infoPersona = async (req, res) => {
+    try {
+        const query = "SELECT nombre, apellido FROM perfil";
+        const result = await pool.query(query);
+
+        // Envía los datos en formato JSON
+        res.json(result.rows);  // o result[0] si estás utilizando otro formato para tu cliente de base de datos
+    } catch (error) {
+        console.error("Error al obtener los datos del perfil:", error);
+        res.status(500).json({ error: "Error al obtener los datos del perfil" });
+    }
+};
 
 
 const Usuario = {
     Logearse,    
-    Profile
+    Profile,
+    infoPersona
 };
 
 export default Usuario; 

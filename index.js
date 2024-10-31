@@ -31,6 +31,11 @@ app.get("/filtro", Transferencias.filtro);
 app.post("/transferir", Transferencias.transferirDinero);
 app.post("/simtransferencia", Transferencias.transferirDineroSimulacion);
 
+// Funciones de menor importancia
+
+app.get("/usuarioInfo", );
+app.get("/infoPersona", Usuario.infoPersona);
+
 // Uncomment these if needed
 // app.use("/saldo", getSaldo);
 // app.use("/transferir", transferirDinero);
