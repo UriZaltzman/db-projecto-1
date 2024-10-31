@@ -1,4 +1,4 @@
-/* import pool from "../dbconfig.js";
+ /* import pool from "../dbconfig.js";
 import bcrypt from "bcryptjs"
 import Usuario from "./Usuario.js";
 
