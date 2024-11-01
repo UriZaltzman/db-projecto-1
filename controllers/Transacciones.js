@@ -125,15 +125,23 @@ const transferirDineroSimulacion = async (req, res) => {
     }
 };
 
-const cargasube = async (req,res) => {
+/*const crearsube = async (req,res) => {
 try {
-    const { cargasube } = req.body;
+    const {sube} = req.body;
+
+    const querySaldoRemitente = "INSERT INTO transacciones (id_user, destino, fecha, monto)
+                                VALUES ($1, $2, $3, $4) RETURNING id";
+    const remitente = await pool.query(querySaldoRemitente, [remitenteId]);
+    if (sube.rows.length <= 15) {
+        return res.status(400).json({ success: false, message: "Error al cargar sube" });
+    }
 
 }
 catch (error) {
     console.log (error)
 }
 }
+*/
 
-const Transferencias = { filtro, transferirDinero, transferirDineroSimulacion };
+const Transferencias = { filtro, transferirDinero, transferirDineroSimulacion, crearsube};
 export default Transferencias;
