@@ -104,7 +104,6 @@ const infoPersona = async (req, res) => {
         const query = "SELECT nombre, apellido FROM perfil";
         const result = await pool.query(query);
 
-        // Envía los datos en formato JSON
         res.json(result.rows);  // o result[0] si estás utilizando otro formato para tu cliente de base de datos
     } catch (error) {
         console.error("Error al obtener los datos del perfil:", error);
@@ -112,11 +111,24 @@ const infoPersona = async (req, res) => {
     }
 };
 
+const usuarioInfo = async (req, res) => {
+    try {
+        const query = "SELECT * FROM perfil WHERE ";
+        const result = await pool.query(query);
+
+        res.json(result.rows);
+    }
+    catch(error){
+        console.error("Error al obtener los datos del usuario:", error);
+        res.status(500).json({ error: "Error al obtener los daots del Usuario"});
+    }
+}
 
 const Usuario = {
     Logearse,    
     Profile,
-    infoPersona
-};
+    infoPersona,
+    usuarioInfo
+}
 
 export default Usuario; 

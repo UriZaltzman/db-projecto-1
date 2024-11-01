@@ -33,7 +33,7 @@ app.post("/simtransferencia", Transferencias.transferirDineroSimulacion);
 
 // Funciones de menor importancia
 
-app.get("/usuarioInfo", );
+app.get("/usuarioInfo", Usuario.usuarioInfo);
 app.get("/infoPersona", Usuario.infoPersona);
 
 // Uncomment these if needed
