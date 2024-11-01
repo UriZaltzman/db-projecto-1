@@ -125,5 +125,15 @@ const transferirDineroSimulacion = async (req, res) => {
     }
 };
 
+const cargasube = async (req,res) => {
+try {
+    const { cargasube } = req.body;
+
+}
+catch (error) {
+    console.log (error)
+}
+}
+
 const Transferencias = { filtro, transferirDinero, transferirDineroSimulacion };
 export default Transferencias;
