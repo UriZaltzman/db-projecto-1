@@ -143,5 +143,5 @@ catch (error) {
 }
 */
 
-const Transferencias = { filtro, transferirDinero, transferirDineroSimulacion, crearsube};
+const Transferencias = { filtro, transferirDinero, transferirDineroSimulacion};
 export default Transferencias;

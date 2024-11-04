@@ -37,7 +37,7 @@ app.get("/usuarioInfo", Usuario.usuarioInfo);
 app.get("/infoPersona", Usuario.infoPersona);
 
 //Sube
-app.post("/crearsube", sube.nroSube)
+//app.post("/crearsube", sube.nroSube)
 
 // Uncomment these if needed
 // app.use("/saldo", getSaldo);
