@@ -98,18 +98,23 @@ const Logearse = async(req, res) => {
         res.status(500).json({ message: 'Error durante el inicio de sesión.' });
     }
 };
-
 const infoPersona = async (req, res) => {
     try {
-        const query = "SELECT nombre, apellido FROM perfil";
-        const result = await pool.query(query);
+        const userId = req.user.id; // Asegúrate de tener `req.user` con la información del usuario autenticado
+        const query = "SELECT nombre, apellido FROM perfil WHERE id = $1";
+        const result = await pool.query(query, [userId]);
 
-        res.json(result.rows);  // o result[0] si estás utilizando otro formato para tu cliente de base de datos
+        if (result.rows.length > 0) {
+            res.json(result.rows);
+        } else {
+            res.status(404).json({ error: "Usuario no encontrado" });
+        }
     } catch (error) {
         console.error("Error al obtener los datos del perfil:", error);
         res.status(500).json({ error: "Error al obtener los datos del perfil" });
     }
 };
+
 
 const usuarioInfo = async (req, res) => {
     try {
