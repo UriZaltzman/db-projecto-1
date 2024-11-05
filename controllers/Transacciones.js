@@ -1,6 +1,6 @@
 import pool from "../dbconfig.js";
 
-const filtro = async (req, res) => {
+/* const filtro = async (req, res) => {
     try{
         const { Check } = req.body
         const filtrar = "SELECT nombre, apellido, mail FROM perfil WHERE mail ILIKE '%' || $1 || '%' or dni ILIKE '%' || $1 || '%' or nombre ILIKE '%' || $1 || '%' or apellido ILIKE '%' || $1 || '%'"
@@ -15,7 +15,36 @@ const filtro = async (req, res) => {
     } catch (error){
         return res.status(500).json({ success: false, message: "Error en el servidor" });
     }
-}
+} */
+
+    const filtro = async (req, res) => {
+        try {
+            // Usar req.query para manejar `GET` sin parámetros
+            const Check = req.query.Check || ''; 
+    
+            let filtrar;
+            let params;
+    
+            if (Check) {
+                // Filtrar si hay un parámetro de búsqueda
+                filtrar = "SELECT nombre, apellido, mail FROM perfil WHERE mail ILIKE '%' || $1 || '%' OR dni ILIKE '%' || $1 || '%' OR nombre ILIKE '%' || $1 || '%' OR apellido ILIKE '%' || $1 || '%'";
+                params = [Check];
+            } else {
+                // Si no hay parámetro, devolver todos los registros
+                filtrar = "SELECT nombre, apellido, mail FROM perfil";
+                params = [];
+            }
+    
+            const resultadoFiltro = await pool.query(filtrar, params);
+    
+            return res.status(200).json({ success: true, results: resultadoFiltro.rows });
+        } catch (error) {
+            console.error("Error en el servidor:", error);
+            return res.status(500).json({ success: false, message: "Error en el servidor" });
+        }
+    };
+    
+    
 
 const transferirDinero = async (req, res) => {
     try {

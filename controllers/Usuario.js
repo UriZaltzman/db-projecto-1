@@ -100,7 +100,7 @@ const Logearse = async(req, res) => {
 };
 const infoPersona = async (req, res) => {
     try {
-        const userId = req.user.id; // Asegúrate de tener `req.user` con la información del usuario autenticado
+        const userId = req.user.id; 
         const query = "SELECT nombre, apellido FROM perfil WHERE id = $1";
         const result = await pool.query(query, [userId]);
 
