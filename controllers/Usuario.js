@@ -2,6 +2,7 @@ import pool from "../dbconfig.js"
 import bcrypt from "bcryptjs"
 import e from "express";
 import jwt from "jsonwebtoken";
+import { verifyToken } from "../middlewares/Usuario.middleware.js";
 
 /*const Logearse = async(req ,res)=> {
     try{ 
@@ -100,7 +101,7 @@ const Logearse = async(req, res) => {
 };
 const infoPersona = async (req, res) => {
     try {
-        const userId = req.user.id; 
+        const userId = req.id;  // Utiliza el ID de usuario decodificado del token
         const query = "SELECT nombre, apellido FROM perfil WHERE id = $1";
         const result = await pool.query(query, [userId]);
 
@@ -114,7 +115,6 @@ const infoPersona = async (req, res) => {
         res.status(500).json({ error: "Error al obtener los datos del perfil" });
     }
 };
-
 
 const usuarioInfo = async (req, res) => {
     try {
