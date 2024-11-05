@@ -11,24 +11,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-// Middleware de autenticación
-app.use((req, res, next) => {
-    const token = req.headers['authorization']?.split(' ')[1];
-    if (token) {
-        try {
-            // Verifica y decodifica el token usando la clave secreta del archivo .env
-            const jwt = require('jsonwebtoken');
-            const decodedToken = jwt.verify(token, process.env.SECRET); // Usa la clave secreta desde .env
-            req.user = decodedToken; // Agrega la información del usuario a `req.user`
-            next(); // Pasa al siguiente middleware o ruta
-        } catch (error) {
-            res.status(401).json({ error: "Token no válido" });
-        }
-    } else {
-        res.status(401).json({ error: "No autorizado, token requerido" });
-    }
-});
-
 
 //app.use(cors(corsop.corsOptions));
 app.use(cors());
