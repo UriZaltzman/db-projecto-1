@@ -17,32 +17,32 @@ import pool from "../dbconfig.js";
     }
 } */
 
-    const filtro = async (req, res) => {
-        try {
-            // Usar req.query para manejar `GET` sin parámetros
-            const Check = req.query.Check || ''; 
+const filtro = async (req, res) => {
+    try {
+            
+        const Check = req.query.Check || ''; 
     
-            let filtrar;
-            let params;
+        let filtrar;
+        let params;
     
-            if (Check) {
-                // Filtrar si hay un parámetro de búsqueda
-                filtrar = "SELECT nombre, apellido, mail FROM perfil WHERE mail ILIKE '%' || $1 || '%' OR dni ILIKE '%' || $1 || '%' OR nombre ILIKE '%' || $1 || '%' OR apellido ILIKE '%' || $1 || '%'";
-                params = [Check];
-            } else {
-                // Si no hay parámetro, devolver todos los registros
-                filtrar = "SELECT nombre, apellido, mail FROM perfil";
-                params = [];
-            }
-    
-            const resultadoFiltro = await pool.query(filtrar, params);
-    
-            return res.status(200).json({ success: true, results: resultadoFiltro.rows });
-        } catch (error) {
-            console.error("Error en el servidor:", error);
-            return res.status(500).json({ success: false, message: "Error en el servidor" });
+        if (Check) {
+                
+            filtrar = "SELECT nombre, apellido, mail FROM perfil WHERE mail ILIKE '%' || $1 || '%' OR dni ILIKE '%' || $1 || '%' OR nombre ILIKE '%' || $1 || '%' OR apellido ILIKE '%' || $1 || '%'";
+            params = [Check];
+        } else {
+
+            filtrar = "SELECT nombre, apellido, mail FROM perfil";
+            params = [];
         }
-    };
+    
+        const resultadoFiltro = await pool.query(filtrar, params);
+    
+        return res.status(200).json({ success: true, results: resultadoFiltro.rows });
+    } catch (error) {
+        console.error("Error en el servidor:", error);
+        return res.status(500).json({ success: false, message: "Error en el servidor" });
+    }
+};
     
     
 
