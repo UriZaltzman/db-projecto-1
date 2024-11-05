@@ -118,22 +118,37 @@ const infoPersona = async (req, res) => {
 
 const usuarioInfo = async (req, res) => {
     try {
-        const query = "SELECT * FROM perfil WHERE ";
-        const result = await pool.query(query);
+        const userId = req.id;  
+        const query = "SELECT * FROM perfil WHERE id = $1";
+        const result = await pool.query(query, [userId]);
 
         res.json(result.rows);
-    }
-    catch(error){
+    } catch (error) {
         console.error("Error al obtener los datos del usuario:", error);
-        res.status(500).json({ error: "Error al obtener los daots del Usuario"});
+        res.status(500).json({ error: "Error al obtener los datos del usuario" });
+    }
+};
+
+const compartir = async (req, res) => {
+    try {
+        const userId = req.id;  
+        const query = "SELECT nombre, apellido, mail FROM perfil WHERE id = $1";
+        const result = await pool.query(query, [userId]);
+
+        res.json(result.rows);
+    } catch (error) {
+        console.error("Error al obtener los datos del usuario:", error);
+        res.status(500).json({ error: "Error al obtener los datos del usuario" });
     }
 }
+
 
 const Usuario = {
     Logearse,    
     Profile,
     infoPersona,
-    usuarioInfo
+    usuarioInfo,
+    compartir
 }
 
 export default Usuario; 

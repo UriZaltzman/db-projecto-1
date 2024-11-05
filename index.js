@@ -33,8 +33,9 @@ app.post("/simtransferencia", Transferencias.transferirDineroSimulacion);
 
 // Funciones de menor importancia
 
-app.get("/usuarioInfo", Usuario.usuarioInfo);   
+app.get("/usuarioInfo", verifyToken, Usuario.usuarioInfo);   
 app.get('/infoPersona', verifyToken, Usuario.infoPersona);
+app.get("/compartir", verifyToken, Usuario.compartir);
 
 
 //Sube
