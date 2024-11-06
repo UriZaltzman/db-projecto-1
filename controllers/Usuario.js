@@ -86,7 +86,7 @@ const Logearse = async(req, res) => {
             const passwordMatch = await bcrypt.compare(req.body.contrasena, Usuario.rows[0].contrasena);
 
             if (passwordMatch) {
-                const token = jwt.sign({ id: Usuario.rows[0].id }, "tu_secreto", { expiresIn: "1d" });
+                const token = jwt.sign({ id: Usuario.rows[0].id }, "tu_secreto", { expiresIn: "1H" });
                 return res.status(200).json({ message: 'Se logeó correctamente.', token });
             } else {
                 return res.status(401).json({ success: false, message: 'La contraseña o el correo electrónico son incorrectos.' });
