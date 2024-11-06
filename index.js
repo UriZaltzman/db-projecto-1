@@ -3,6 +3,7 @@ import cors from 'cors';
 import Registro from './controllers/Registro.js';
 import Usuario from './controllers/Usuario.js';
 import Transferencias from './controllers/Transacciones.js'
+import Sube from './controllers/Sube.js'
 import corsop, { verifyToken } from './middlewares/Usuario.middleware.js';
 // import { getSaldo, transferirDinero, getTransacciones } from './controllers/wallet.js';
 
@@ -32,10 +33,18 @@ app.post("/transferir", Transferencias.transferirDinero);
 app.post("/simtransferencia", Transferencias.transferirDineroSimulacion);
 
 // Funciones de menor importancia
-
 app.get("/usuarioInfo", verifyToken, Usuario.usuarioInfo);   
 app.get('/infoPersona', verifyToken, Usuario.infoPersona);
 app.get("/compartir", verifyToken, Usuario.compartir);
+
+// Funcion Recargar Celular
+
+
+// Funcion Recargar Sube
+app.post("/ingresarSube", verifyToken, Sube.ingresarSube);
+
+
+// Funcion Pagar Impuestos
 
 
 //Sube
