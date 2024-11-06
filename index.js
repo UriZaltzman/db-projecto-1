@@ -42,7 +42,7 @@ app.get("/compartir", verifyToken, Usuario.compartir);
 
 
 // Funcion Recargar Sube
-app.post("/ingresarSube", verifyToken, Sube.ingresarSube);
+app.post("/ingresarSube", Sube.ingresarSube);
 app.get("/traerSube", verifyToken, Sube.traersube);
 
 // Funcion Pagar Impuestos

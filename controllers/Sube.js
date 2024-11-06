@@ -12,8 +12,8 @@ const ingresarSube = async (req, res) => {
             return res.status(400).json({ error: "Datos faltantes: userId o nroSube no proporcionados" });
         }
 
-        const query = 'INSERT INTO sube (id_usuario, nroSube) VALUES ($1, $2) RETURNING *';
-        const result = await pool.query(query, [userId, nroSube]);
+        const query = 'INSERT INTO sube (id_usuario, nroSube) VALUES ($1) RETURNING *';
+        const result = await pool.query(query, [nroSube]);
 
         res.json({ success: true, message: "Número de Sube ingresado correctamente", data: result.rows });
     } catch (error) {
