@@ -22,7 +22,20 @@ const ingresarSube = async (req, res) => {
     }
 };
 
+const traersube = async (req, res) => {
+    try {
+        const userId = req.id;  
+        const query = "SELECT nroSube FROM sube WHERE id = $1";
+        const result = await pool.query(query, [userId]);
+
+        res.json(result.rows);
+    } catch (error) {
+        console.error("Error al obtener los datos de la sube:", error);
+        res.status(500).json({ error: "Error al obtener los datos de la sube" });
+    }
+};
 
 export default {
-    ingresarSube
+    ingresarSube,
+    traersube
 };

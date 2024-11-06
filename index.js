@@ -4,6 +4,7 @@ import Registro from './controllers/Registro.js';
 import Usuario from './controllers/Usuario.js';
 import Transferencias from './controllers/Transacciones.js'
 import Sube from './controllers/Sube.js'
+import Impuesto from './controllers/Impuesto.js'
 import corsop, { verifyToken } from './middlewares/Usuario.middleware.js';
 // import { getSaldo, transferirDinero, getTransacciones } from './controllers/wallet.js';
 
@@ -42,10 +43,11 @@ app.get("/compartir", verifyToken, Usuario.compartir);
 
 // Funcion Recargar Sube
 app.post("/ingresarSube", verifyToken, Sube.ingresarSube);
-
+app.get("/traerSube", verifyToken, Sube.traersube);
 
 // Funcion Pagar Impuestos
-
+app.post("/ingresarImpuesto", verifyToken, Impuesto.ingresarImpuesto)
+app.get("/traerImpuesto", verifyToken, Impuesto.traerImpuesto)
 
 //Sube
 //app.post("/crearsube", sube.nroSube)
