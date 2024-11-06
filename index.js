@@ -43,22 +43,14 @@ app.get("/compartir", verifyToken, Usuario.compartir);
 
 // Funcion Recargar Sube
 app.post("/ingresarSube", verifyToken, Sube.ingresarSube);
+app.get ("/traerSube", verifyToken, Sube.traersube)
 
 
 // Funcion Pagar Impuestos
 app.post ("/ingresarImpuesto", verifyToken, Impuestos.ingresarImpuesto)
+app.get ("/traerImpuesto", verifyToken, Impuestos.traerImpuesto)
 
-//Sube
-//app.post("/crearsube", sube.nroSube)
 
-// Uncomment these if needed
-// app.use("/saldo", getSaldo);
-// app.use("/transferir", transferirDinero);
-// app.use("/transacciones", getTransacciones);
-
-/* app.listen(port, () => {
-    console.log(`Proyecto API listening at http://localhost:${port}`);
-}); */
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

@@ -22,6 +22,19 @@ import pool from "../dbconfig.js";
     }
 };
 
+const traerImpuesto = async (req, res) => {
+    try {
+        const userId = req.id;  
+        const query = "SELECT nroImpuesto FROM impuesto WHERE id = $1";
+        const result = await pool.query(query, [userId]);
+
+        res.json(result.rows);
+    } catch (error) {
+        console.error("Error al obtener los datos del impuesto:", error);
+        res.status(500).json({ error: "Error al obtener los datos del impuesto" });
+    }
+};
+
 export default Impuestos = {
-    ingresarImpuesto
+    ingresarImpuesto, traerImpuesto
 }
