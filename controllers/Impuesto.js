@@ -29,7 +29,7 @@ const traerImpuesto = async (req, res) => {
     }
 };
 
-export default Impuestos = {
+export default Impuesto = {
     ingresarImpuesto, 
     traerImpuesto
 }
