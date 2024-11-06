@@ -5,6 +5,7 @@ import Usuario from './controllers/Usuario.js';
 import Transferencias from './controllers/Transacciones.js'
 import Sube from './controllers/Sube.js'
 import corsop, { verifyToken } from './middlewares/Usuario.middleware.js';
+import Impuestos from './controllers/Impuestos.js';
 // import { getSaldo, transferirDinero, getTransacciones } from './controllers/wallet.js';
 
 const app = express();
@@ -45,7 +46,7 @@ app.post("/ingresarSube", verifyToken, Sube.ingresarSube);
 
 
 // Funcion Pagar Impuestos
-
+app.post ("/ingresarImpuesto", verifyToken, Impuestos.ingresarImpuesto)
 
 //Sube
 //app.post("/crearsube", sube.nroSube)
