@@ -27,6 +27,7 @@ app.post("/nuevo", Registro.AddUser);
 // Logearse
 app.post("/login", Usuario.Logearse);
 app.get("/profile/:id", verifyToken, Usuario.Profile);
+app.update("/forgotPassword", verifyToken, Usuario.forgotPassword);
 
 //Transacciones
 app.get("/filtro", Transferencias.filtro);

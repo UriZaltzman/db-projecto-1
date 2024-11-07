@@ -2,6 +2,8 @@ import pool from "../dbconfig.js"
 import bcrypt from "bcryptjs"
 import e from "express";
 import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
+
 import { verifyToken } from "../middlewares/Usuario.middleware.js";
 
 /*const Logearse = async(req ,res)=> {
@@ -154,7 +156,84 @@ const verSaldo = async (req, res) => {
         console.error("Error al obtener los datos del usuario:", error);
         res.status(500).json({ error: "Error al obtener los datos del usuario" });
     }
-}
+};
+const enviarCodigo = async (req, res) => {
+    const { mail } = req.body;
+
+    try {
+        // Verificar si el email existe en la base de datos
+        const MailCheck = await pool.query('SELECT id FROM perfil WHERE mail = $1', [mail]);
+        if (MailCheck.rows.length === 0) {
+            return res.status(404).json({ message: 'El correo electrónico no está registrado.' });
+        }
+
+        // Generar un código de 5 dígitos
+        const codigo = Math.floor(10000 + Math.random() * 90000);
+
+        // Guardar el código en la base de datos con un tiempo de expiración
+        const userId = MailCheck.rows[0].id;
+        const expirationTime = new Date(Date.now() + 10 * 60 * 1000); // 10 minutos
+        await pool.query(
+            'INSERT INTO codigos_verificacion (id_usuario, codigo, expiracion) VALUES ($1, $2, $3) ON CONFLICT (id_usuario) DO UPDATE SET codigo = $2, expiracion = $3',
+            [userId, codigo, expirationTime]
+        );
+
+        // Configurar transporte para nodemailer
+        const transporter = nodemailer.createTransport({
+            service: "Gmail",
+            auth: {
+                user: "tu_correo@gmail.com",
+                pass: "tu_contraseña"
+            }
+        });
+
+        // Enviar correo con el código
+        const mailOptions = {
+            from: "tu_correo@gmail.com",
+            to: mail,
+            subject: "Código de Verificación",
+            text: `Tu código de verificación es: ${codigo}`
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.status(200).json({ message: "Código enviado al correo." });
+    } catch (error) {
+        console.error("Error al enviar el código de verificación:", error);
+        res.status(500).json({ error: "Error al enviar el código de verificación." });
+    }
+};
+
+
+const forgotPassword = async (res, req) => {
+    try{
+        const { nuevaContrasena, confirmarContrasena} = req.body
+        const userId = req.id
+
+        // Validar que ambas contraseñas esten puestas correctamente
+        if (!nuevaContrasena || !confirmarContrasena) {
+            return res.status(400).json({ error: "Ambas contraseñas son requeridas." });
+        }
+
+        // Validar que ambas contraseñas coincidan
+        if (nuevaContrasena !== confirmarContrasena) {
+            return res.status(400).json({ error: "Las contraseñas no coinciden." });
+        }
+
+         // Encriptar la nueva contraseña
+         const hashedPassword = await bcrypt.hash(nuevaContrasena, 10);
+
+         // Actualizar la contraseña en la base de datos
+         const queryUpdatePassword = "UPDATE perfil SET contrasena = $1 WHERE id = $2";
+         await pool.query(queryUpdatePassword, [hashedPassword, userId]);
+ 
+         res.status(200).json({ message: "Contraseña actualizada exitosamente." });
+
+    }catch (error){
+        console.error("Error al restablecer la contraseña", error);
+        res.status(500).json({ error: "Error"})
+    }
+};
 
 const Usuario = {
     Logearse,    
@@ -162,7 +241,8 @@ const Usuario = {
     infoPersona,
     usuarioInfo,
     compartir,
-    verSaldo
+    verSaldo,
+    forgotPassword
 }
 
 export default Usuario; 
