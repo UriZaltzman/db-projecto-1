@@ -19,7 +19,7 @@ import pool from "../dbconfig.js";
 
 const filtro = async (req, res) => {
     try {
-        const userId = req.user.id; // ID del usuario autenticado (puedes cambiar esto si usas otro campo)
+            
         const Check = req.query.Check || ''; 
     
         let filtrar;
@@ -27,12 +27,12 @@ const filtro = async (req, res) => {
     
         if (Check) {
                 
-            filtrar = "SELECT nombre, apellido, mail FROM perfil WHERE (mail ILIKE '%' || $1 || '%' OR dni ILIKE '%' || $1 || '%' OR nombre ILIKE '%' || $1 || '%' OR apellido ILIKE '%' || $1 || '%') AND id <> $2";
-            params = [Check, userId];
+            filtrar = "SELECT nombre, apellido, mail FROM perfil WHERE mail ILIKE '%' || $1 || '%' OR dni ILIKE '%' || $1 || '%' OR nombre ILIKE '%' || $1 || '%' OR apellido ILIKE '%' || $1 || '%'";
+            params = [Check];
         } else {
 
-            filtrar = "SELECT nombre, apellido, mail FROM perfil WHERE id <> $1";
-            params = [userId];
+            filtrar = "SELECT nombre, apellido, mail FROM perfil";
+            params = [];
         }
     
         const resultadoFiltro = await pool.query(filtrar, params);
