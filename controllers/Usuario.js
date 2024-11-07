@@ -140,15 +140,29 @@ const compartir = async (req, res) => {
         console.error("Error al obtener los datos del usuario:", error);
         res.status(500).json({ error: "Error al obtener los datos del usuario" });
     }
-}
+};
 
+const verSaldo = async (req, res) => {
+    try{
+        const userId = req.id
+        const queryVerSaldo = "SELECT saldo FROM perfil WHERE id = $1"
+        const result = await pool.query(queryVerSaldo, [userId]);
+
+        res.json(result.rows);
+
+    } catch (error){
+        console.error("Error al obtener los datos del usuario:", error);
+        res.status(500).json({ error: "Error al obtener los datos del usuario" });
+    }
+}
 
 const Usuario = {
     Logearse,    
     Profile,
     infoPersona,
     usuarioInfo,
-    compartir
+    compartir,
+    verSaldo
 }
 
 export default Usuario; 

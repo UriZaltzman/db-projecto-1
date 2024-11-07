@@ -37,6 +37,7 @@ app.post("/simtransferencia", Transferencias.transferirDineroSimulacion);
 app.get("/usuarioInfo", verifyToken, Usuario.usuarioInfo);   
 app.get('/infoPersona', verifyToken, Usuario.infoPersona);
 app.get("/compartir", verifyToken, Usuario.compartir);
+app.get("/verSaldo", verifyToken, Usuario.verSaldo);
 
 // Funcion Recargar Celular
 

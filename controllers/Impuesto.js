@@ -29,8 +29,53 @@ const traerImpuesto = async (req, res) => {
     }
 };
 
+const pagarImpuesto = async (req, res) => {
+    try {
+        const { usuarioId, impuestoId } = req.body;
+
+        // Verificar que el impuesto exista y pertenezca al usuario
+        const queryVerificarImpuesto = `SELECT tipo, nroimpuesto FROM impuestos WHERE id = $1 AND id_usuario = $2`;
+        const impuesto = await pool.query(queryVerificarImpuesto, [impuestoId, usuarioId]);
+
+        if (impuesto.rows.length === 0) {
+            return res.status(400).json({ success: false, message: "Impuesto no encontrado o no pertenece al usuario" });
+        }
+
+        const { tipo, nroimpuesto } = impuesto.rows[0];
+
+        // Registrar la actividad en la tabla actividades
+        await pool.query("BEGIN"); // Iniciar transacción
+
+        const descripcion = `Pago de impuesto ${tipo} con número ${nroimpuesto}`;
+        const queryRegistrarActividad = `
+            INSERT INTO actividades (descripcion, id_usuario, fecha) 
+            VALUES ($1, $2, $3) RETURNING id
+        `;
+        const actividad = await pool.query(queryRegistrarActividad, [
+            descripcion,
+            usuarioId,
+            new Date()
+        ]);
+
+        await pool.query("COMMIT"); // Confirmar transacción
+
+        return res.status(200).json({ 
+            success: true, 
+            message: "Pago registrado exitosamente", 
+            actividadId: actividad.rows[0].id 
+        });
+
+    } catch (error) {
+        await pool.query("ROLLBACK"); // Revertir la transacción en caso de error
+        console.error(error);
+        return res.status(500).json({ success: false, message: "Error en el servidor" });
+    }
+};
+
+
 const Impuesto = {
     ingresarImpuesto, 
-    traerImpuesto
+    traerImpuesto,
+    pagarImpuesto
 }
 export default Impuesto 
