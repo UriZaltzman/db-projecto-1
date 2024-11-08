@@ -48,7 +48,8 @@ const filtro = async (req, res) => {
 
 const transferirDinero = async (req, res) => {
     try {
-        const { remitenteId, saldo, destinatarioId } = req.body;
+        const { saldo, destinatarioId } = req.body;
+        const remitenteId = req.id;
 
         // Verificar que el remitente tenga saldo suficiente
         const querySaldoRemitente = "SELECT saldo FROM perfil WHERE id = $1";
