@@ -21,14 +21,14 @@ const filtro = async (req, res) => {
     try {
             
         const Check = req.query.Check || ''; 
+        const userId = req.id
     
         let filtrar;
         let params;
     
         if (Check) {
-                
-            filtrar = "SELECT nombre, apellido, mail FROM perfil WHERE mail ILIKE '%' || $1 || '%' OR dni ILIKE '%' || $1 || '%' OR nombre ILIKE '%' || $1 || '%' OR apellido ILIKE '%' || $1 || '%'";
-            params = [Check];
+            filtrar = "SELECT id, nombre, apellido, mail FROM perfil WHERE id = $1 AND (mail ILIKE '%' || $2 || '%' OR dni ILIKE '%' || $2 || '%' OR nombre ILIKE '%' || $2 || '%' OR apellido ILIKE '%' || $2 || '%')";
+            params = [userId ,Check];
         } else {
 
             filtrar = "SELECT nombre, apellido, mail FROM perfil";
