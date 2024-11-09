@@ -31,8 +31,8 @@ app.put("/forgotPassword", verifyToken, Usuario.forgotPassword);
 
 //Transacciones
 app.get("/filtro", Transferencias.filtro);
-app.post("/transferir", Transferencias.transferirDinero);
-app.post("/simtransferencia", Transferencias.transferirDineroSimulacion);
+app.post("/transferir", verifyToken, Transferencias.transferirDinero);
+app.post("/simtransferencia", verifyToken, Transferencias.transferirDineroSimulacion);
 
 // Funciones de menor importancia
 app.get("/usuarioInfo", verifyToken, Usuario.usuarioInfo);   

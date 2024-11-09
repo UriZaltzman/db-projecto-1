@@ -50,6 +50,10 @@ const transferirDinero = async (req, res) => {
         const { saldo, destinatarioId } = req.body;
         const remitenteId = req.id;
 
+        console.log("saldo: " + saldo);
+        console.log("destinatarioId: " + destinatarioId);
+        console.log("remitenteId: " + remitenteId);
+
         // Verificar que el remitente tenga saldo suficiente
         const querySaldoRemitente = "SELECT saldo FROM perfil WHERE id = $1";
         const remitente = await pool.query(querySaldoRemitente, [remitenteId]);

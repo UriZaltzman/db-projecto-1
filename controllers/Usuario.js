@@ -147,6 +147,7 @@ const compartir = async (req, res) => {
 const verSaldo = async (req, res) => {
     try{
         const userId = req.id
+        console.log("Saldo: " + userId);
         const queryVerSaldo = "SELECT saldo FROM perfil WHERE id = $1"
         const result = await pool.query(queryVerSaldo, [userId]);
 
