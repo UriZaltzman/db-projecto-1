@@ -30,8 +30,7 @@ const filtro = async (req, res) => {
             filtrar = "SELECT id, nombre, apellido, mail FROM perfil WHERE id = $1 AND (mail ILIKE '%' || $2 || '%' OR dni ILIKE '%' || $2 || '%' OR nombre ILIKE '%' || $2 || '%' OR apellido ILIKE '%' || $2 || '%')";
             params = [userId ,Check];
         } else {
-
-            filtrar = "SELECT nombre, apellido, mail FROM perfil";
+            filtrar = "SELECT id, nombre, apellido, mail FROM perfil";
             params = [];
         }
     
