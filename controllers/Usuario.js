@@ -103,7 +103,7 @@ const Logearse = async(req, res) => {
 };
 const infoPersona = async (req, res) => {
     try {
-        const userId = req.id;  // Utiliza el ID de usuario decodificado del token
+        const userId = req.id; 
         const query = "SELECT nombre, apellido FROM perfil WHERE id = $1";
         const result = await pool.query(query, [userId]);
 
@@ -236,6 +236,27 @@ const forgotPassword = async (res, req) => {
     }
 };
 
+const recargarSaldo = async (req, res) => {
+    try {
+        const userId = req.id;  // Asegúrate de que req.id esté correctamente definido por el middleware
+        const query = "UPDATE perfil SET saldo = 100000 WHERE id = $1 RETURNING saldo";       
+        const result = await pool.query(query, [userId]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        res.json({
+            message: "Saldo restablecido correctamente",
+            saldo: result.rows[0].saldo
+        });
+
+    } catch (error) {
+        console.error("Error al recargar el saldo del usuario:", error);
+        res.status(500).json({ error: "Error al recargar el saldo del usuario" });
+    }
+};
+
 const Usuario = {
     Logearse,    
     Profile,
@@ -243,7 +264,8 @@ const Usuario = {
     usuarioInfo,
     compartir,
     verSaldo,
-    forgotPassword
+    forgotPassword,
+    recargarSaldo
 }
 
 export default Usuario; 

@@ -33,6 +33,7 @@ app.put("/forgotPassword", verifyToken, Usuario.forgotPassword);
 app.get("/filtro", Transferencias.filtro);
 app.post("/transferir", verifyToken, Transferencias.transferirDinero);
 app.post("/simtransferencia", verifyToken, Transferencias.transferirDineroSimulacion);
+app.put("/recargarSaldo", verifyToken, Usuario.recargarSaldo);
 
 // Funciones de menor importancia
 app.get("/usuarioInfo", verifyToken, Usuario.usuarioInfo);   
@@ -44,7 +45,7 @@ app.get("/verSaldo", verifyToken, Usuario.verSaldo);
 
 
 // Funcion Recargar Sube
-app.post("/ingresarSube", Sube.ingresarSube);
+app.post("/ingresarSube", verifyToken, Sube.ingresarSube);
 app.get("/traerSube", verifyToken, Sube.traersube);
 
 // Funcion Pagar Impuestos
