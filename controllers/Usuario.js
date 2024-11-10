@@ -205,40 +205,38 @@ const enviarCodigo = async (req, res) => {
     }
 };
 
+const forgotPassword = async (req, res) => {
+    try {
+        const { nuevaContrasena, confirmarContrasena, mail } = req.body;
 
-const forgotPassword = async (res, req) => {
-    try{
-        const { nuevaContrasena, confirmarContrasena} = req.body
-        const userId = req.id
-
-        // Validar que ambas contraseñas esten puestas correctamente
-        if (!nuevaContrasena || !confirmarContrasena) {
-            return res.status(400).json({ error: "Ambas contraseñas son requeridas." });
+        if (!nuevaContrasena || !confirmarContrasena || !mail) {
+            return res.status(400).json({ error: "El correo y ambas contraseñas son requeridos." });
         }
 
-        // Validar que ambas contraseñas coincidan
         if (nuevaContrasena !== confirmarContrasena) {
             return res.status(400).json({ error: "Las contraseñas no coinciden." });
         }
 
-         // Encriptar la nueva contraseña
-         const hashedPassword = await bcrypt.hash(nuevaContrasena, 10);
+        const hashedPassword = await bcrypt.hash(nuevaContrasena, 10);
 
-         // Actualizar la contraseña en la base de datos
-         const queryUpdatePassword = "UPDATE perfil SET contrasena = $1 WHERE id = $2";
-         await pool.query(queryUpdatePassword, [hashedPassword, userId]);
- 
-         res.status(200).json({ message: "Contraseña actualizada exitosamente." });
+        const queryUpdatePassword = "UPDATE perfil SET contrasena = $1 WHERE mail = $2"; 
+        const result = await pool.query(queryUpdatePassword, [hashedPassword, mail]);
 
-    }catch (error){
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: "Usuario no encontrado." });
+        }
+
+        res.status(200).json({ message: "Contraseña actualizada exitosamente." });
+
+    } catch (error) {
         console.error("Error al restablecer la contraseña", error);
-        res.status(500).json({ error: "Error"})
+        res.status(500).json({ error: "Error al restablecer la contraseña" });
     }
 };
 
 const recargarSaldo = async (req, res) => {
     try {
-        const userId = req.id;  // Asegúrate de que req.id esté correctamente definido por el middleware
+        const userId = req.id;  
         const query = "UPDATE perfil SET saldo = 100000 WHERE id = $1 RETURNING saldo";       
         const result = await pool.query(query, [userId]);
 
