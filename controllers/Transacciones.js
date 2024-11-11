@@ -176,5 +176,20 @@ catch (error) {
 }
 */
 
-const Transferencias = { filtro, transferirDinero, transferirDineroSimulacion};
+const verTransacciones = async (req, res) => {
+    try {
+        const userId = req.id;
+        const query = "SELECT * FROM transacciones WHERE id_user = $1 OR destino = $1 ORDER BY fecha DESC LIMIT 3";
+        const result = await pool.query(query, [userId]);
+
+        res.json(result.rows); 
+
+    } catch (error) {
+        console.error("Error al obtener los datos de las transferencias:", error);
+        res.status(500).json({ error: "Error al obtener las transferencias" });
+    }
+};
+
+
+const Transferencias = { filtro, transferirDinero, transferirDineroSimulacion, verTransacciones};
 export default Transferencias;

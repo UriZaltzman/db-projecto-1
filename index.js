@@ -34,6 +34,7 @@ app.get("/filtro", Transferencias.filtro);
 app.post("/transferir", verifyToken, Transferencias.transferirDinero);
 app.post("/simtransferencia", verifyToken, Transferencias.transferirDineroSimulacion);
 app.put("/recargarSaldo", verifyToken, Usuario.recargarSaldo);
+app.get("/verTransacciones", verifyToken, Transferencias.verTransacciones)
 
 // Funciones de menor importancia
 app.get("/usuarioInfo", verifyToken, Usuario.usuarioInfo);   
