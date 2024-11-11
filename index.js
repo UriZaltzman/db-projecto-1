@@ -50,7 +50,10 @@ app.get("/traerSube", verifyToken, Sube.traersube);
 
 // Funcion Pagar Impuestos
 app.post("/ingresarImpuesto", verifyToken, Impuesto.ingresarImpuesto)
-app.get("/traerImpuesto", verifyToken, Impuesto.traerImpuesto)
+app.get("/traerImpuesto", verifyToken, Impuesto.traerImpuestos)
+app.post("/verimpuestos", verifyToken, Impuesto.VerImpuestos);
+app.post("/pagarImpuesto", verifyToken, Impuesto.PagarImpuesto);
+
 
 //Sube
 //app.post("/crearsube", sube.nroSube)

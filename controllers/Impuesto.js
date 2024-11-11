@@ -1,81 +1,96 @@
 import pool from "../dbconfig.js";
- const ingresarImpuesto = async (req, res) => {
-    try {
+
+const ingresarImpuesto = async (req, res) => {
+ try {
         const userId = req.id;
-        const { nroImpuesto } = req.body;
-        console.log("userId:", userId);
-        console.log("nroImpuesto:", nroImpuesto);
-        if (!userId || !nroImpuesto) {
-            return res.status(400).json({ error: "Datos faltantes: userId o nroImpuesto no proporcionados" });
+	const { tipo } = req.body;
+
+        if (!userId || !tipo) {
+            return res.status(400).json({ error: "Datos faltantes: userId, nroImpuesto o tipo no proporcionados" });
         }
-        const query = 'INSERT INTO impuesto (id_usuario, nroImpuesto) VALUES ($1, $2) RETURNING *';
-        const result = await pool.query(query, [userId, nroImpuesto]);
-        res.json({ success: true, message: "Número de Impuesto ingresado correctamente", data: result.rows });
+	const query = 'INSERT INTO impuesto (id_usuario, nroimpuesto, tipo) VALUES ($1, $2, $3) RETURNING *';
+        const result = await pool.query(query, [userId, nroImpuesto, tipo]);
+
+        res.status(201).json({ success: true, message: "Número de impuesto ingresado correctamente", data: result.rows });
     } catch (error) {
         console.error("Error al ingresar el impuesto", error);
-        res.status(500).json({ error: "Error al ingresar el impuesto a pagar" });
+
+	res.status(500).json({ error: "Error al ingresar el impuesto" });
     }
 };
 
-const traerImpuesto = async (req, res) => {
-    try {
-        const userId = req.id;  
-        const query = "SELECT nroImpuesto FROM impuesto WHERE id = $1";
+
+const traerImpuestos = async (req, res) => {
+ try {
+	const userId = req.id;
+
+        if (!userId) {
+            return res.status(400).json({ error: "ID de usuario no proporcionado" });
+        }
+
+        const query = "SELECT nroimpuesto, tipo, saldo FROM impuesto WHERE id_usuario = $1";
         const result = await pool.query(query, [userId]);
-        res.json(result.rows);
+
+	res.status(200).json(result.rows);
     } catch (error) {
         console.error("Error al obtener los datos del impuesto:", error);
         res.status(500).json({ error: "Error al obtener los datos del impuesto" });
     }
 };
 
-const pagarImpuesto = async (req, res) => {
-    try {
-        const { usuarioId, impuestoId } = req.body;
+const VerImpuestos = async (req, res) => {
+    try{
+        const userId = req.id;
+        const { tipo } = req.body;
+        console.log(tipo);
+        console.log("Saldo: " + userId);
+        const queryVerSaldo = "SELECT id, tipo, saldo FROM impuesto WHERE id_usuario = $1 AND tipo = $2 AND pagado = false"
+        const result = await pool.query(queryVerSaldo, [userId, tipo]);
 
-        // Verificar que el impuesto exista y pertenezca al usuario
-        const queryVerificarImpuesto = `SELECT tipo, nroimpuesto FROM impuestos WHERE id = $1 AND id_usuario = $2`;
-        const impuesto = await pool.query(queryVerificarImpuesto, [impuestoId, usuarioId]);
+        return res.status(200).json({ success: true, results: result.rows });
 
-        if (impuesto.rows.length === 0) {
-            return res.status(400).json({ success: false, message: "Impuesto no encontrado o no pertenece al usuario" });
-        }
-
-        const { tipo, nroimpuesto } = impuesto.rows[0];
-
-        // Registrar la actividad en la tabla actividades
-        await pool.query("BEGIN"); // Iniciar transacción
-
-        const descripcion = `Pago de impuesto ${tipo} con número ${nroimpuesto}`;
-        const queryRegistrarActividad = `
-            INSERT INTO actividades (descripcion, id_usuario, fecha) 
-            VALUES ($1, $2, $3) RETURNING id
-        `;
-        const actividad = await pool.query(queryRegistrarActividad, [
-            descripcion,
-            usuarioId,
-            new Date()
-        ]);
-
-        await pool.query("COMMIT"); // Confirmar transacción
-
-        return res.status(200).json({ 
-            success: true, 
-            message: "Pago registrado exitosamente", 
-            actividadId: actividad.rows[0].id 
-        });
-
-    } catch (error) {
-        await pool.query("ROLLBACK"); // Revertir la transacción en caso de error
-        console.error(error);
-        return res.status(500).json({ success: false, message: "Error en el servidor" });
+    } catch (error){
+        console.error("Error al obtener los impuestos pendiente de pagos", error);
+        res.status(500).json({ error: "Error al obtener los datos" });
     }
 };
 
+const PagarImpuesto = async (req, res) => {
+    const { id_impuesto, saldo } = req.body;
+    try{
+        const userId = req.id;
+        console.log("id_impuesto: " + id_impuesto);
+        console.log("userId: " + userId);
+
+        const queryRestarSaldoRemitente = "UPDATE perfil SET saldo = saldo - $1 WHERE id = $2";
+        await pool.query(queryRestarSaldoRemitente, [saldo, userId]);
+
+       /* const queryInsertarTransferencia = `
+            INSERT INTO transacciones (id_user, destino, fecha, monto)
+            VALUES ($1, $2, $3, $4) RETURNING id
+        `;
+        const registroTransferencia = await pool.query(queryInsertarTransferencia, [
+            userId,
+            "",
+            new Date(),
+            saldo
+        ]);*/
+
+        const queryVerSaldo = "update impuesto set pagado = true WHERE id = $1"
+        const result = await pool.query(queryVerSaldo, [id_impuesto]);
+
+        return res.status(200).json({ success: true, /*transferenciaID: registroTransferencia.rows[0].id */});
+
+    } catch (error){
+        console.error("Error al pagar el impuesto" + id_impuesto, error);
+        res.status(500).json({ error: "Error al obtener los datos" });
+    }
+};
 
 const Impuesto = {
     ingresarImpuesto, 
-    traerImpuesto,
-    pagarImpuesto
+    traerImpuestos,
+    PagarImpuesto,
+    VerImpuestos
 }
-export default Impuesto 
+export default Impuesto;
